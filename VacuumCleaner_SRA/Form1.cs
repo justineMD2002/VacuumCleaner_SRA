@@ -85,7 +85,7 @@ namespace VacuumCleaner_SRA
             if (textBox1.InvokeRequired) textBox1.Invoke(new Action(() => OnTimerElapsed(sender, e)));
             else
             {
-                await AppendTextWithDelay("Current location: " + environmentList[selectedIndex].Loc);
+                await AppendTextWithDelay(Environment.NewLine + "Current location: " + environmentList[selectedIndex].Loc);
                 await AppendTextWithDelay("Status: " + action);
 
                 if (environmentList[selectedIndex].Stat == 1)
@@ -100,13 +100,29 @@ namespace VacuumCleaner_SRA
                 if (shouldUpdateImage) 
                 {
                     if (environmentList[selectedIndex].Loc == 'A')
+                    {
                         selectedIndex = (random.Next(2) == 0) ? 1 : 2;
+                        if (selectedIndex == 1) textBox1.AppendText("Move right" + Environment.NewLine);
+                        else textBox1.AppendText("Move down" + Environment.NewLine);
+                    }
                     else if (environmentList[selectedIndex].Loc == 'B')
+                    {
                         selectedIndex = (random.Next(2) == 0) ? 0 : 3;
+                        if (selectedIndex == 0) textBox1.AppendText("Move left" + Environment.NewLine);
+                        else textBox1.AppendText("Move down" + Environment.NewLine);
+                    }
                     else if (environmentList[selectedIndex].Loc == 'C')
+                    {
                         selectedIndex = (random.Next(2) == 0) ? 0 : 3;
+                        if (selectedIndex == 0) textBox1.AppendText("Move up" + Environment.NewLine);
+                        else textBox1.AppendText("Move right" + Environment.NewLine);
+                    }
                     else if (environmentList[selectedIndex].Loc == 'D')
+                    {
                         selectedIndex = (random.Next(2) == 0) ? 1 : 2;
+                        if (selectedIndex == 1) textBox1.AppendText("Move up" + Environment.NewLine);
+                        else textBox1.AppendText("Move left" + Environment.NewLine);
+                    }
 
                     environmentList[temp].PicBox.Image = null;
                     DisplayRandomPicture(selectedIndex);
