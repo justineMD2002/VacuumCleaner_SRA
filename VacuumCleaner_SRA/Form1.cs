@@ -10,10 +10,13 @@ namespace VacuumCleaner_SRA
 {
     public partial class Form1 : Form
     {
+        private int temp;
         private bool shouldUpdateImage = true;
         private bool isTimerRunning = true;
         private System.Timers.Timer timer = new System.Timers.Timer(5000);
         private Random random = new Random();
+        private int randomNumber;
+        private int ctr = 0;
         List<EnvironmentVacuum> environmentList = new List<EnvironmentVacuum>
         {
             new EnvironmentVacuum { Loc = 'A' },
@@ -31,6 +34,7 @@ namespace VacuumCleaner_SRA
             environmentList[2].PicBox = pictureBox3;
             environmentList[3].PicBox = pictureBox4;
             randomEnvironment();
+            randomNumber = random.Next(2, 3);
             timer.Elapsed += new ElapsedEventHandler(OnTimerElapsed);
         }
 
@@ -61,15 +65,31 @@ namespace VacuumCleaner_SRA
             }
         }
 
+        public void randomEnvironmentModified()
+        {
+            for (int i = 0; i < environmentList.Count; i++)
+            {
+
+                if (environmentList[i].Stat == 0 && environmentList[i].PicBox != null && i != selectedIndex && i != temp) 
+                {
+                    environmentList[i].Stat = random.Next(2);
+                    if (environmentList[i].Stat == 1) environmentList[i].PicBox.BackColor = Color.PaleVioletRed;
+                }
+ 
+            }
+        }
+
         private void btnRandom_Click(object sender, EventArgs e)
         {
             shouldUpdateImage = true; 
             DisplayRandomPicture(selectedIndex);
             randomEnvironment();
+            ctr = 0;
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            ctr = 0;
             isTimerRunning = true;
             textBox1.AppendText("Booting up..." + Environment.NewLine);
             btnStop.Enabled = true;
@@ -80,7 +100,8 @@ namespace VacuumCleaner_SRA
 
         private async void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            int temp = selectedIndex;
+            temp = selectedIndex;
+            
             string action = (environmentList[selectedIndex].Stat == 0) ? "Clean" : "Dirty";
             if (textBox1.InvokeRequired) textBox1.Invoke(new Action(() => OnTimerElapsed(sender, e)));
             else
@@ -124,6 +145,14 @@ namespace VacuumCleaner_SRA
                         else textBox1.AppendText("Move left" + Environment.NewLine);
                     }
 
+                    ctr++;
+                    if (ctr == randomNumber)
+                    {
+                        ctr = 0;
+                        randomNumber = random.Next(2, 3);
+                        randomEnvironmentModified();
+
+                    }
                     environmentList[temp].PicBox.Image = null;
                     DisplayRandomPicture(selectedIndex);
                 }
@@ -145,6 +174,7 @@ namespace VacuumCleaner_SRA
             btnStart.Enabled = true;
             btnRandom.Enabled = true;
             btnStop.Enabled = false;
+            ctr = 0;
             textBox1.AppendText("Shutting down..." + Environment.NewLine);
         }
     }
